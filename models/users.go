@@ -84,6 +84,20 @@ func (us *UserService) Close() error {
 	return us.db.Close()
 }
 
+// DestructiveReset drops the user table and rebuilds it
+func (us *UserService) DestructiveReset() error {
+	if err := us.db.DropTableIfExists(&User{}).Error; err != nil {
+		return err
+	}
+	return us.AutoMigrate()
+}
+
+// AutoMigrate will attempt to automatically migrate the
+// users table
+func (us *UserService) AutoMigrate() error {
+	return us.db.AutoMigrate(&User{}).Error
+}
+
 type User struct {
 	gorm.Model
 	Name  string
